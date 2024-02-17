@@ -17,7 +17,7 @@ class TestDeleteMethod:
             ('125631', '12345671', 'success'),  # другой id
             ('1231', '', 'failure'),  # пустое phone
             ('12 31 ', ' 1234 5671 ', 'failure'),  # пробелы в начале, в середине и в конце
-            ('12 31 ', ' 12345671 ', 'failure'),  # пробелы в начале и в конце
+            (' 12 31 ', ' 12345671 ', 'failure'),  # пробелы в начале и в конце
             ('double', '12345671', 'failure'),  # удаление уже удаленного
         ])
     @pytest.mark.asyncio
@@ -47,13 +47,13 @@ class TestDeleteMethod:
             assert_that(json.loads(repl_del)['status'], equal_to(status_in_response), 'Status')
 
     @pytest.mark.parametrize("id, name, surname, age, status_in_response",
-                             [
-                                 ('12317987', 'Chuck2',  'Dorris2', 123456, 'success'),  # удаление после редактирования id
-                                 ('12317', 'BlUCK25', 'Dorris2', 123456, 'success'),  # удаление после редактирования name
-                                 ('12317', 'Chuck2', 'boris', 123456, 'success'),  # удаление после редактирования surname
-                                 ('12317', 'Chuck2', 'Dorris2', 99999, 'success'),  # удаление после редактирования age
-                                 ('131313', 'тест', 'тестер', 88888, 'success'),  # удаление после редактирования 4 полей
-                             ])
+     [
+         ('12317987', 'Chuck2',  'Dorris2', 123456, 'success'),  # удаление после редактирования id
+         ('12317', 'BlUCK25', 'Dorris2', 123456, 'success'),  # удаление после редактирования name
+         ('12317', 'Chuck2', 'boris', 123456, 'success'),  # удаление после редактирования surname
+         ('12317', 'Chuck2', 'Dorris2', 99999, 'success'),  # удаление после редактирования age
+         ('131313', 'тест', 'тестер', 88888, 'success'),  # удаление после редактирования 4 полей
+     ])
     @pytest.mark.asyncio
     async def test_check_delete_after_update_functionality(self, service_url, id, name, surname, age, status_in_response):
         request_text = json.dumps({
@@ -98,7 +98,7 @@ class TestDeleteMethod:
             ('id', '< form % 20 action =»http: // live.hh.ru» > < input % 20 type =»submit» > < / form >', 'method', 'delete', 'phone', "<script>alert('XSS1')</script>", 'failure'),  # нет обработки потенциально опасных символов
             ('id', '21231234141343434444212312341413434344442123123414134343444421231234141343434444212312341413434344442123123414134343444421231234141343434444212312341413434344442123123414134343444421231234141343434444212312341413434344442123123414134343444421231234141343434444',
              'method', 'delete', 'phone', '21231234141343434444212312341413434344442123123414134343444421231234141343434444212312341413434344442123123414134343444421231234141343434444212312341413434344442123123414134343444421231234141343434444212312341413434344442123123414134343444421231234141343434444',
-             'failure')
+             'failure')  # перегрузка операторов
         ])
     @pytest.mark.asyncio
     async def test_check_delete_negative_functionality(self, service_url, id_key, id, method_key, method, phone_key, phone, status_in_response):
@@ -121,3 +121,8 @@ class TestDeleteMethod:
             if key and not isinstance(variable, str):
                 assert_that(json.loads(repl_del)['reason'], contains_string(f'[json.exception.type_error.302] type must be string'), 'Reason')
 
+    @pytest.mark.asyncio
+    async def test_send_non_json_request(self, service_url):
+        resp = await ws_request(service_url, "test")
+        assert_that(json.loads(resp)['status'], equal_to('failure'), 'Status')
+        assert_that(json.loads(resp)['reason'], contains_string("[json.exception.parse_error.101] parse error at line 1, column 2: syntax error while parsing value - invalid literal; last read: 'te'"), 'Reason')

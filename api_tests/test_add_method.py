@@ -10,17 +10,17 @@ class TestAddMethod:
     Check Add Method
     """
     @pytest.mark.parametrize("id, name, surname, phone, age, status_in_response",
-                             [
-                                 ('123', 'CHUCK1',  'dorris1', generate_random_string(), 100500, 'success'),  #добавление в разном регистре  ** Баг №1
-                                 ('123', 'Chuck1', 'Dorris1', generate_random_string(), 100500, 'success'),  # другой номер но данные теже
-                                 ('', 'chuck', 'DORRIS', generate_random_string(), 100500, 'success'),  # пустой id
-                                 ('123', '', 'Dorris1', generate_random_string(), 100500, 'success'),  # пустое name
-                                 ('123', 'Chuck1', '', generate_random_string(), 100500, 'success'),  # пустая surname
-                                 ('123', 'Chuck1', 'Dorris1', '', 100500, 'success'),  # пустая phone
-                                 ('', '', '', '', 100500, 'success'),  # 4 пустых значения
-                                 (' 12 3 ', ' Chu ck1 ', ' Dorr is1 ', ' 12345 4545 ', 100500, 'success'),  # пробелы в начале, в середине и в конце
-                                 (' 12 3 ', 'Тестер', 'ТЕстерВИЧ', ' 12345 4545 ', 100500, 'success'),  # имя и фамилия на кирилицу
-                             ])
+     [
+         ('123', 'CHUCK1',  'dorris1', generate_random_string(), 100500, 'success'),  #добавление в разном регистре  ** Баг №1
+         ('123', 'Chuck1', 'Dorris1', generate_random_string(), 100500, 'success'),  # другой номер но данные теже
+         ('', 'chuck', 'DORRIS', generate_random_string(), 100500, 'success'),  # пустой id
+         ('123', '', 'Dorris1', generate_random_string(), 100500, 'success'),  # пустое name
+         ('123', 'Chuck1', '', generate_random_string(), 100500, 'success'),  # пустая surname
+         ('123', 'Chuck1', 'Dorris1', '', 100500, 'success'),  # пустая phone
+         ('', '', '', '', 100500, 'success'),  # 4 пустых значения
+         (' 12 3 ', ' Chu ck1 ', ' Dorr is1 ', ' 12345 4545 ', 100500, 'success'),  # пробелы в начале, в середине и в конце
+         (' 12 3 ', 'Тестер', 'ТЕстерВИЧ', ' 12345 4545 ', 100500, 'success'),  # имя и фамилия на кирилицу
+     ])
     @pytest.mark.asyncio
     async def test_check_add_positive_functionality(self, service_url, id, name, surname, phone, age, status_in_response):
         request_text = json.dumps({

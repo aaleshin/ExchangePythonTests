@@ -3,6 +3,10 @@
 1)) Система позволяет создавать и изменять пользователя с невалидным телефоном
 
 2) При ошибке есть поле "reason": "[json.exception.type_error.302]...". Не обработанная внутрення ошибка может быть потенциальной дырой.
+"{
+  "reason": "[json.exception.parse_error.101] parse error at line 1, column 3: syntax error while parsing value - invalid literal; last read: 'trs'",
+  "status": "failure"
+}"
 
 3) При добавлении пользователя видим что поля 'id', 'method', 'name', 'surname', 'phone', 'age' - обязательные,что не указано в документации.
 
@@ -65,7 +69,6 @@ E  websockets.exceptions.ConnectionClosedError: no close frame received or sent
   "status": "failure"
 }'
 
-
 13) Перепутан статус при поиске по телефону.
 '{
   "id": "123",
@@ -91,6 +94,19 @@ E  websockets.exceptions.ConnectionClosedError: no close frame received or sent
   "status": "success"
 }'
 
-16)
+16) Запрос методом select и отсутствующем поле для поиска - ложит приложение
+('id', '123', 'method', 'select', 'test', '1234567')
+terminate called without an active exception
+/home/ubuntu/bin/start: line 3:   479 Aborted                 (core dumped) ./tester.so 0.0.0.0 4000
 
+  raise exceptions.IncompleteReadError(incomplete, n)
+E asyncio.exceptions.IncompleteReadError: 0 bytes read on a total of 2 expected bytes
+
+ raise self.connection_closed_exc()
+E websockets.exceptions.ConnectionClosedError: no close frame received or sent
+
+17) поиск по surname отдает только 1 сущность из базы. при наличие 2-х со схожим surname
+
+18) Если во время поиска введены 2 и более поля для описка, одно из которых phone, то ищет только по полю phone,
+ что не указано в документации.
 """
